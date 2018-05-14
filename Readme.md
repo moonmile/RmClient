@@ -10,3 +10,9 @@ Redmine Client
 # Author 
 
 - tomoaki masuda 
+
+# License
+
+- MIT
+
+
