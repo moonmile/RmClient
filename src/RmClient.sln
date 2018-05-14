@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RmClient", "RmClient\RmClie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RmClient.Lib", "RmClient.Lib\RmClient.Lib.csproj", "{7C5929C4-A247-4D95-A350-951C095D0562}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RmClient.Console.Core", "RmClient.Console.Core\RmClient.Console.Core.csproj", "{DFF35F72-C1F4-43EE-9058-E7A258A400A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RmClient.Console", "RmClient.Console\RmClient.Console.csproj", "{508F2712-3072-4D8D-A98C-4FB383F05E72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{7C5929C4-A247-4D95-A350-951C095D0562}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C5929C4-A247-4D95-A350-951C095D0562}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C5929C4-A247-4D95-A350-951C095D0562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFF35F72-C1F4-43EE-9058-E7A258A400A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFF35F72-C1F4-43EE-9058-E7A258A400A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFF35F72-C1F4-43EE-9058-E7A258A400A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFF35F72-C1F4-43EE-9058-E7A258A400A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{508F2712-3072-4D8D-A98C-4FB383F05E72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{508F2712-3072-4D8D-A98C-4FB383F05E72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{508F2712-3072-4D8D-A98C-4FB383F05E72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{508F2712-3072-4D8D-A98C-4FB383F05E72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
