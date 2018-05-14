@@ -44,6 +44,7 @@ namespace RmClient
         public ViewModel()
         {
             _sv = new RedmineService();
+            _sv.SetConfig(AppDomain.CurrentDomain.BaseDirectory + "RmClient.config");
             Init();
 
         }

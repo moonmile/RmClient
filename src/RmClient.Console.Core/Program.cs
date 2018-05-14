@@ -36,8 +36,7 @@ RmClient コンソールツール
         public Program()
         {
             _sv = new Moonmile.Redmine.RedmineService();
-            _sv.ApiKey = "6cff07e620debe042194121ea9524e60c9483880";
-            _sv.BaseUrl = "http://openccpm.com/redmine/";
+            _sv.SetConfig(AppDomain.CurrentDomain.BaseDirectory + "RmClient.config");
         }
         Moonmile.Redmine.RedmineService _sv;
 
@@ -117,6 +116,7 @@ RmClient コンソールツール
                     else
                     {
                         var items = await _sv.Status.GetListAsync();
+                        if (s == "完了") s = "終了";
                         var st = items.FirstOrDefault(t => t.Name == s);
                         if (st != null)
                             issue.Status = st;

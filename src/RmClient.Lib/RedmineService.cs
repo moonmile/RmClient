@@ -21,8 +21,8 @@ namespace Moonmile.Redmine
         public UserService User { get; set; }
         public PriorityService Priority { get; set; }
 
-        string apikey = "6cff07e620debe042194121ea9524e60c9483880";
-        string baseurl = "http://openccpm.com/redmine/";
+        string apikey = "";
+        string baseurl = "";
         HttpClient _cl = new HttpClient();
 
         public string ApiKey { get { return apikey; } set { apikey = value; } }
@@ -36,6 +36,26 @@ namespace Moonmile.Redmine
             this.Status = new StatusService(this);
             this.User = new UserService(this);
             this.Priority = new PriorityService(this);
+        }
+
+        /// <summary>
+        /// ファイルから設定を読み込む
+        /// </summary>
+        /// <param name="path"></param>
+        public bool SetConfig( string path )
+        {
+            try
+            {
+                var xml = System.IO.File.ReadAllText(path);
+                var doc = XDocument.Load(new System.IO.StringReader(xml));
+                this.ApiKey = doc.Root.Element("ApiKey").Value;
+                this.BaseUrl = doc.Root.Element("BaseUrl").Value;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #region // ショートカットメソッド
@@ -94,16 +114,16 @@ namespace Moonmile.Redmine
         /// <typeparam name="T"></typeparam>
         public class Service<T> where T : new() 
         {
-            protected HttpClient _cl;
-            protected string _apikey;
-            protected string _baseurl;
+            protected RedmineService _rs;
+
+            protected HttpClient _cl {  get { return _rs._cl;  } }
+            protected string _apikey { get { return _rs.ApiKey; } }
+            protected string _baseurl { get { return _rs.BaseUrl; } }
             protected string _tablename;
 
             public Service(RedmineService rs, string tablename )
             {
-                _cl = rs._cl;
-                _baseurl = rs.baseurl;
-                _apikey = rs.apikey;
+                _rs = rs;
                 _tablename = tablename;
             }
 
