@@ -59,11 +59,11 @@ namespace Moonmile.Redmine
         }
 
         #region // ショートカットメソッド
-        public async Task<bool> CreateObjectAsync( Issue item )
+        public async Task<bool> AddAsync( Issue item )
         {
             return await this.Issue.CreateAsync(item);
         }
-        public async Task<bool> UpdateObjectAsync(Issue item)
+        public async Task<bool> UpdateAsync(Issue item)
         {
             return await this.Issue.UpdateAsync(item);
         }

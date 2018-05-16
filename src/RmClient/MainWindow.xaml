@@ -5,34 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RmClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1100">
+        Title="MainWindow" Height="700" Width="600">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="500"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Button 
-            Click="clickProjects"
-            Content="プロジェクト一覧"
-            HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="10,10,0,0" Height="60"/>
 
-        <DataGrid x:Name="lv" Grid.Row="1" Margin="8" 
-                  AutoGenerateColumns="False" IsReadOnly="True"
+        <ComboBox x:Name="lv" Margin="4" 
+                  IsReadOnly="True"
                   ItemsSource="{Binding ItemsProject}"
                   SelectedItem="{Binding Project}"
-                  >
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Width="30" Binding="{Binding Id}"/>
-                <DataGridTextColumn Header="" Width="60" Binding="{Binding Identifier}"/>
-                <DataGridTextColumn Header="名前" Width="120" Binding="{Binding Name}"/>
-            </DataGrid.Columns>
-        </DataGrid>
-        <DataGrid x:Name="lv2" Grid.Row="1" Grid.Column="1" Margin="8" 
+                  DisplayMemberPath="Name"
+                  />
+
+        <DataGrid x:Name="lv2" Grid.Row="1" Margin="10" 
                 ItemsSource="{Binding ItemsTicket}"
                 SelectedItem="{Binding Ticket}"
                   AutoGenerateColumns="False" IsReadOnly="True">
@@ -47,21 +39,18 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button 
-            Click="clickIssues"
-            Content="チケット一覧"
-            HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="8,10,0,0" Height="60" Grid.Column="1"/>
-        <Button 
             Click="clickIssueUpdate"
             Content="更新"
-            HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="10,10,0,0" Height="60" Grid.Column="2"/>
+            HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="91,10,0,0" Height="40" Grid.Row="2"/>
 
-        <Grid Grid.Row="1" Grid.Column="2">
+        <Grid Grid.Row="3" Margin="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
@@ -73,16 +62,16 @@
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="種別" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4"/>
-            <TextBlock Text="ID" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="1"/>
-            <TextBlock Text="ステータス" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="2"/>
-            <TextBlock Text="優先度" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="3"/>
-            <TextBlock Text="担当者" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="4"/>
-            <TextBlock Text="タイトル" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="5"/>
-            <TextBlock Text="内容" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="6"/>
-            <TextBlock Text="期日" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="7"/>
-            <TextBlock Text="進捗率" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="8"/>
-            <TextBlock Text="開始日" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="9"/>
+            <TextBlock Text="種別" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Height="16" Width="24"/>
+            <TextBlock Text="ID" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="1" Height="16" Width="12"/>
+            <TextBlock Text="ステータス" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Column="2" RenderTransformOrigin="0.499,2.756" Grid.Row="1" Height="15" Width="44"/>
+            <TextBlock Text="優先度" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="2" Grid.Column="2" Height="15" Width="36"/>
+            <TextBlock Text="担当者" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="3" Grid.Column="2" Height="15" Width="36"/>
+            <TextBlock Text="タイトル" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="4" Height="16" Width="36"/>
+            <TextBlock Text="内容" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4" Grid.Row="5" Height="16" Width="24"  />
+            <TextBlock Text="期日" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="6" Height="16" Width="24"/>
+            <TextBlock Text="進捗率" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="6" Height="16" Width="36" Grid.Column="2"/>
+            <TextBlock Text="開始日" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4" Grid.Row="7" Height="16" Width="36"/>
 
             <ComboBox
                 ItemsSource="{Binding Trackers}"
@@ -96,31 +85,31 @@
                 ItemsSource="{Binding Statuses}"
                 DisplayMemberPath="Name"
                 SelectedItem="{Binding Ticket.Status}"
-                Text="{Binding Ticket.Status.Name}" Margin="4" Grid.Column="1" Grid.Row="2" />
+                Text="{Binding Ticket.Status.Name}" Margin="4" Grid.Column="3" Grid.Row="1" />
             <ComboBox 
                 ItemsSource="{Binding Priorities}"
                 DisplayMemberPath="Name"
                 SelectedItem="{Binding Ticket.Priority}"
-                Text="{Binding Ticket.Priority.Name}" Margin="4" Grid.Column="1" Grid.Row="3" />
+                Text="{Binding Ticket.Priority.Name}" Margin="4" Grid.Column="3" Grid.Row="2" />
             <ComboBox 
                 ItemsSource="{Binding Users}"
                 DisplayMemberPath="Name"
                 SelectedItem="{Binding Ticket.Author}"
-                Text="{Binding Ticket.Author.Name}" Margin="4" Grid.Column="1" Grid.Row="4" />
-            <TextBox Text="{Binding Ticket.Subject}" Margin="4" Grid.Column="1" Grid.Row="5" />
+                Text="{Binding Ticket.Author.Name}" Margin="4" Grid.Column="3" Grid.Row="3" />
+            <TextBox Text="{Binding Ticket.Subject}" Margin="4" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" />
             <TextBox Text="{Binding Ticket.Description}"
                      AcceptsReturn="True"
-                     Margin="4" Grid.Column="1" Grid.Row="6" />
+                     Margin="4" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="3" />
             <DatePicker 
                 Text="{Binding Ticket.DueDate}" 
-                Margin="4" Grid.Column="1" Grid.Row="7" />
-            <TextBox Text="{Binding Ticket.DoneRatio}" Margin="4" Grid.Column="1" Grid.Row="8" />
-            <TextBox Text="{Binding Ticket.StartDate}" Margin="4" Grid.Column="1" Grid.Row="9"  IsReadOnly="True" />
+                Margin="4" Grid.Column="1" Grid.Row="6" />
+            <TextBox Text="{Binding Ticket.DoneRatio}" Margin="4" Grid.Column="3" Grid.Row="6" />
+            <TextBox Text="{Binding Ticket.StartDate}" Margin="4" Grid.Column="1" Grid.Row="7"  IsReadOnly="True" />
 
         </Grid>
         <Button 
             Click="clickIssueNew"
             Content="新規"
-            HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="91,10,0,0" Height="60" Grid.Column="2"/>
+            HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="10,10,0,0" Height="40" Grid.Row="2"/>
     </Grid>
 </Window>
