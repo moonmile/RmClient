@@ -101,10 +101,12 @@
                      AcceptsReturn="True"
                      Margin="4" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="3" />
             <DatePicker 
-                Text="{Binding Ticket.DueDate}" 
+                SelectedDate="{Binding Ticket.DueDate}" 
                 Margin="4" Grid.Column="1" Grid.Row="6" />
             <TextBox Text="{Binding Ticket.DoneRatio}" Margin="4" Grid.Column="3" Grid.Row="6" />
-            <TextBox Text="{Binding Ticket.StartDate, StringFormat='yyyy/MM/dd'}" Margin="4" Grid.Column="1" Grid.Row="7"  IsReadOnly="True" />
+            <DatePicker 
+                SelectedDate="{Binding Ticket.StartDate}" 
+                Margin="4" Grid.Column="1" Grid.Row="7" />
 
         </Grid>
         <Button 

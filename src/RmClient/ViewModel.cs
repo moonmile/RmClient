@@ -124,7 +124,7 @@ namespace RmClient
             text += $"{this.Ticket.Id}\t";
             text += $"{this.Ticket.Subject}\t";
             text += "\"" +  this.Ticket.Description + "\"" + "\t";
-            text += this.Ticket.StartDate.ToString("yyyy/MM/dd");
+            text += this.Ticket.StartDate.HasValue ? this.Ticket.StartDate.Value.ToString("yyyy/MM/dd") : "";
             // text = text.Replace("\n", "");
 
             try
