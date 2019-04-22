@@ -131,37 +131,42 @@ namespace Moonmile.Redmine.Model
     {
         public IssueUpdate( Issue it )
         {
-            this.id = it.Id;
+            this.subject = it.Subject;
+            this.description = it.Description;
             this.priority_id = it.Project?.Id ?? 0;
             this.tracker_id = it.Tracker?.Id ?? 0;
             this.status_id = it.Status?.Id ?? 0;
-            this.priority_id = it.Priority?.Id ?? 0;
-            this.author_id = it.Author?.Id ?? 0;
-            this.subject = it.Subject;
-            this.description = it.Description;
+
+            this.assigned_to_id = it.AssignedTo?.Id ?? 0;
             this.start_date = it.StartDate;
             this.done_ratio = it.DoneRatio;
+            this.due_date = it.DueDate;
+
+            /*
+            this.id = it.Id;
+            this.author_id = it.Author?.Id ?? 0;
             this.created_on = it.CreatedOn;
             this.updated_on = it.UpdatedOn;
-            this.assigned_to_id = it.AssignedTo?.Id ?? 0;
             this.category_id = it.Category?.Id ?? 0;
-            this.due_date = it.DueDate;
+            */
         }
-        public int id { get; }
+        public string subject { get; }
+        public string description { get; }
         public int project_id { get; }
         public int tracker_id { get; }
         public int status_id { get; }
         public int priority_id { get; }
-        public int author_id { get; }
-        public string subject { get; }
-        public string description { get; }
-        public DateTime? start_date { get; }
+        public int assigned_to_id { get; }
         public int done_ratio { get; }
+        public DateTime? start_date { get; }
+        public DateTime? due_date { get; }
+        /*
+        public int id { get; }
+        public int author_id { get; }
         public DateTime created_on { get; }
         public DateTime updated_on { get; }
-        public int assigned_to_id { get; }
         public int category_id { get; }
-        public DateTime? due_date { get; }
+        */
     }
 
 

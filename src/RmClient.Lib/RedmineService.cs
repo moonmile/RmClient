@@ -225,7 +225,7 @@ namespace Moonmile.Redmine
                 var url = $"{_baseurl}{_tablename}/{item.Id}.json?key={_apikey}";
                 var json = JsonConvert.SerializeObject(new IssueUpdate(item));
                 json = $"{{ \"issue\": {json} }}"; 
-                var contnet = new StringContent(json, Encoding.UTF8, "text/json");
+                var contnet = new StringContent(json, Encoding.UTF8, "application/json");
                 var res = await _cl.PutAsync(url, contnet);
 
                 return true;
