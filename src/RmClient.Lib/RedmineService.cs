@@ -216,15 +216,8 @@ namespace Moonmile.Redmine
             /// <param name="item"></param>
             public async Task<bool> UpdateAsync(Issue item)
             {
-#if false
-                var url = $"{_baseurl}{_tablename}/{item.Id}.xml?key={_apikey}";
-                var xml = item.ToXml();
-                var contnet = new StringContent(xml, Encoding.UTF8, "application/xml");
-                var res = await _cl.PutAsync(url, contnet);
-#endif
                 var url = $"{_baseurl}{_tablename}/{item.Id}.json?key={_apikey}";
-                var json = JsonConvert.SerializeObject(new IssueUpdate(item));
-                json = $"{{ \"issue\": {json} }}"; 
+                var json = IssueUpdate.ToJson(item);
                 var contnet = new StringContent(json, Encoding.UTF8, "application/json");
                 var res = await _cl.PutAsync(url, contnet);
 
@@ -236,14 +229,8 @@ namespace Moonmile.Redmine
             /// <param name="item"></param>
             public async Task<bool> CreateAsync(Issue item)
             {
-#if false
-                var url = $"{_baseurl}{_tablename}.xml?key={_apikey}";
-                var xml = item.ToXml();
-                var contnet = new StringContent(xml, Encoding.UTF8, "application/xml");
-                var res = await _cl.PostAsync(url, contnet);
-#endif
                 var url = $"{_baseurl}{_tablename}.json?key={_apikey}";
-                var json = JsonConvert.SerializeObject(item);
+                var json = IssueUpdate.ToJson(item);
                 var contnet = new StringContent(json, Encoding.UTF8, "application/json");
                 var res = await _cl.PostAsync(url, contnet);
                 return true;

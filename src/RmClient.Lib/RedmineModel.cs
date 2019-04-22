@@ -127,23 +127,21 @@ namespace Moonmile.Redmine.Model
         public DateTime? DueDate { get; set; }
     }
 
-    public class IssueUpdate
+    class IssueUpdate
     {
-        public IssueUpdate( Issue it )
+        IssueUpdate( Issue it )
         {
             this.subject = it.Subject;
             this.description = it.Description;
-            this.priority_id = it.Project?.Id ?? 0;
+            this.project_id = it.Project?.Id ?? 0;
+            this.priority_id = it.Priority?.Id ?? 0;
             this.tracker_id = it.Tracker?.Id ?? 0;
             this.status_id = it.Status?.Id ?? 0;
-
             this.assigned_to_id = it.AssignedTo?.Id ?? 0;
-            this.start_date = it.StartDate;
+            this.start_date = it.StartDate == null? "": it.StartDate.Value.ToString("yyyy-MM-dd");
             this.done_ratio = it.DoneRatio;
-            this.due_date = it.DueDate;
-
+            this.due_date = it.DueDate == null ? "" : it.DueDate.Value.ToString("yyyy-MM-dd");
             /*
-            this.id = it.Id;
             this.author_id = it.Author?.Id ?? 0;
             this.created_on = it.CreatedOn;
             this.updated_on = it.UpdatedOn;
@@ -158,15 +156,19 @@ namespace Moonmile.Redmine.Model
         public int priority_id { get; }
         public int assigned_to_id { get; }
         public int done_ratio { get; }
-        public DateTime? start_date { get; }
-        public DateTime? due_date { get; }
+        public string start_date { get; }
+        public string due_date { get; }
         /*
-        public int id { get; }
         public int author_id { get; }
-        public DateTime created_on { get; }
-        public DateTime updated_on { get; }
         public int category_id { get; }
         */
+
+        public static string ToJson(Issue item )
+        {
+            var json = JsonConvert.SerializeObject(new IssueUpdate(item));
+            json = $"{{ \"issue\": {json} }}";
+            return json;
+        }
     }
 
 
@@ -246,134 +248,5 @@ namespace Moonmile.Redmine.Model
         public int Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
-    }
-
-
-
-#if false
-    public class User
-    {
-        [XmlElement("id")]
-        public int Id { get; set; }
-        [XmlElement("name")]
-        public string Name { get; set; }
-        public User() { }
-        public User(XElement it)
-        {
-            this.Id = it.Element("id").ToInt();
-            if (it.Element("name") != null)
-            {
-                this.Name = it.Element("name").Value;
-            }
-            else if (it.Element("firstname") != null)
-            {
-                this.Name = it.Element("firstname").Value + " " + it.Element("lastname").Value;
-            }
-            else if (it.Element("user") != null)
-            {
-                this.Id = it.Element("user", "id").ToInt();
-                this.Name = it.Element("user", "name").Value;
-            }
-        }
-    }
-#endif
-    /// <summary>
-    /// XElementアクセス用の拡張メソッド
-    /// </summary>
-    internal static class XElementExtentions
-    {
-        public static XElement Element(this XElement el, string name)
-        {
-            return el.Element(XName.Get(name));
-        }
-        public static XAttribute Element(this XElement el, string name, string attr)
-        {
-            return el.Element(XName.Get(name)).Attribute(XName.Get(attr));
-        }
-        public static int ToInt(this XElement el)
-        {
-            if (string.IsNullOrEmpty(el.Value))
-                return 0;
-
-            return int.Parse(el.Value);
-        }
-        public static bool ToBool(this XElement el)
-        {
-            return bool.Parse(el.Value);
-        }
-        public static DateTime ToDatetime(this XElement el)
-        {
-            return DateTime.Parse(el.Value);
-        }
-        public static DateTime? ToDatetimeOrNull(this XElement el)
-        {
-            if (el.Value == "")
-                return null;
-            return DateTime.Parse(el.Value);
-        }
-
-
-        public static int ToInt(this XAttribute el)
-        {
-            return int.Parse(el.Value);
-        }
-        public static bool ToBool(this XAttribute el)
-        {
-            return bool.Parse(el.Value);
-        }
-        public static DateTime ToDatetime(this XAttribute el)
-        {
-            return DateTime.Parse(el.Value);
-        }
-        public static DateTime? ToDatetimeOrNull(this XAttribute el)
-        {
-            if (el.Value == "")
-                return null;
-            return DateTime.Parse(el.Value);
-        }
-
-
-        public static void ToObject(this XElement root, object o)
-        {
-            var pis = o.GetType().GetProperties();
-            foreach (var pi in pis)
-            {
-                var at = pi.GetCustomAttribute(typeof(XmlElementAttribute)) as XmlElementAttribute;
-                if (at != null)
-                {
-                    var elName = at.ElementName;
-                    var el = root.Element(elName);
-                    var attr = root.Attribute(elName);
-                    if (el != null)
-                    {
-                        try
-                        {
-                            pi.SetValue(o,
-                            pi.PropertyType == typeof(int) ? (object)el.ToInt() :
-                            pi.PropertyType == typeof(string) ? (object)el.Value :
-                            pi.PropertyType == typeof(bool) ? (object)el.ToBool() :
-                            pi.PropertyType == typeof(DateTime) ? (object)el.ToDatetime() :
-                            pi.PropertyType == typeof(DateTime?) ? (object)el.ToDatetimeOrNull() :
-                            null);
-                        }
-                        catch { }
-                    }
-                    else if (attr != null)
-                    {
-                        try
-                        {
-                            pi.SetValue(o,
-                            pi.PropertyType == typeof(int) ? (object)attr.ToInt() :
-                            pi.PropertyType == typeof(string) ? (object)attr.Value :
-                            pi.PropertyType == typeof(bool) ? (object)attr.ToBool() :
-                            pi.PropertyType == typeof(DateTime) ? (object)attr.ToDatetime() :
-                            pi.PropertyType == typeof(DateTime?) ? (object)attr.ToDatetimeOrNull() :
-                            null);
-                        }
-                        catch { }
-                    }
-                }
-            }
-        }
     }
 }
