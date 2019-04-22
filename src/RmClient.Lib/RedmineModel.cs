@@ -6,136 +6,246 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Moonmile.Redmine.Model
 {
+    public interface IItems<T>
+    {
+        List<T> Items { get; }
+    }
+
+    public class Projects : IItems<Project>
+    {
+        public Project[] projects { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Project> Items { get => this.projects.ToList(); }
+    }
+
     public class Project
     {
-        [XmlElement("id")]
+        [JsonProperty("id")]
         public int Id { get; set; }
-        [XmlElement("name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
-        [XmlElement("identifier")]
+        [JsonProperty("identifier")]
         public string Identifier { get; set; }
-        [XmlElement("description")]
+        [JsonProperty("description")]
         public string Description { get; set; }
-        [XmlElement("status")]
+        [JsonProperty("status")]
         public int Status { get; set; }
-        [XmlElement("is_public")]
-        public bool IsPublic { get; set; }
-        [XmlElement("created_on")]
+        [JsonProperty("created_on")]
         public DateTime CreatedOn { get; set; }
-        [XmlElement("updated_on")]
+        [JsonProperty("updated_on")]
         public DateTime UpdatedOn { get; set; }
-
-        public Project() { }
-        public Project(XElement el) { el.ToObject(this); }
-
+        [JsonProperty("is_public")]
+        public bool IsPublic { get; set; }
     }
+
+    public class Issues : IItems<Issue>
+    {
+        public Issue[] issues { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Issue> Items { get => this.issues.ToList(); }
+    }
+
+    public class Users : IItems<User>
+    {
+        [JsonProperty("memberships")]
+        public User[] users { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<User> Items { get => this.users.ToList(); }
+    }
+
+    public class Trackers : IItems<Tracker>
+    {
+        public Tracker[] trackers { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Tracker> Items { get => this.trackers.ToList(); }
+    }
+
+    public class Statuses : IItems<Status>
+    {
+        [JsonProperty("issue_statuses")]
+        public Status[] statuses { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Status> Items { get => this.statuses.ToList(); }
+    }
+
+    public class Priorities : IItems<Priority>
+    {
+        [JsonProperty("issue_priorities")]
+        public Priority[] priorities { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Priority> Items { get => this.priorities.ToList(); }
+    }
+
     public class Issue
     {
-        [XmlElement("id")]
+        [JsonProperty("id")]
         public int Id { get; set; }
+        [JsonProperty("project")]
         public Project Project { get; set; }
+        [JsonProperty("tracker")]
         public Tracker Tracker { get; set; }
+        [JsonProperty("status")]
         public Status Status { get; set; }
+        [JsonProperty("priority")]
         public Priority Priority { get; set; }
+        [JsonProperty("author")]
         public User Author { get; set; }
-        [XmlElement("subject")]
+        [JsonProperty("subject")]
         public string Subject { get; set; }
-        [XmlElement("description")]
+        [JsonProperty("description")]
         public string Description { get; set; }
-        [XmlElement("start_date")]
+        [JsonProperty("start_date")]
         public DateTime? StartDate { get; set; }
-        [XmlElement("due_date")]
-        public DateTime? DueDate { get; set; }
-        [XmlElement("done_ratio")]
+        [JsonProperty("done_ratio")]
         public int DoneRatio { get; set; }
-        [XmlElement("is_private")]
-        public bool IsPrivate { get; set; }
-        [XmlElement("estimated_hours")]
-        public int? EstimatedHours { get; set; }
-        [XmlElement("created_on")]
+        [JsonProperty("created_on")]
         public DateTime CreatedOn { get; set; }
-        [XmlElement("updated_on")]
+        [JsonProperty("updated_on")]
         public DateTime UpdatedOn { get; set; }
-        [XmlElement("closed_on")]
-        public DateTime? ClosedOn { get; set; }
-
-        public Issue() {
-            this.Project = new Project();
-            this.Tracker = new Tracker();
-            this.Status = new Status();
-            this.Priority = new Priority();
-            this.Author = new User();
-        }
-        public Issue(XElement it) 
-        {
-            this.Project = new Project();
-            this.Tracker = new Tracker();
-            this.Status = new Status();
-            this.Priority = new Priority();
-            this.Author = new User();
-            it.Element("project").ToObject(this.Project);
-            it.Element("tracker").ToObject(this.Tracker);
-            it.Element("status").ToObject(this.Status);
-            it.Element("priority").ToObject(this.Priority);
-            it.Element("author").ToObject(this.Author);
-            it.ToObject(this);
-        }
-        public string ToXml()
-        {
-            var root = new XElement(XName.Get("issue"));
-            root.Add(new XElement(XName.Get("project_id"), this.Project.Id));
-            root.Add(new XElement(XName.Get("tracker_id"), this.Tracker.Id));
-            root.Add(new XElement(XName.Get("status_id"), this.Status.Id));
-            root.Add(new XElement(XName.Get("priority_id"), this.Priority.Id));
-            root.Add(new XElement(XName.Get("subject"), this.Subject));
-            root.Add(new XElement(XName.Get("description"), this.Description));
-            return root.ToString();
-        }
+        [JsonProperty("assigned_to")]
+        public AssignedTo AssignedTo { get; set; }
+        [JsonProperty("category")]
+        public Category Category { get; set; }
+        [JsonProperty("due_date")]
+        public DateTime? DueDate { get; set; }
     }
+
+    public class IssueUpdate
+    {
+        public IssueUpdate( Issue it )
+        {
+            this.id = it.Id;
+            this.priority_id = it.Project?.Id ?? 0;
+            this.tracker_id = it.Tracker?.Id ?? 0;
+            this.status_id = it.Status?.Id ?? 0;
+            this.priority_id = it.Priority?.Id ?? 0;
+            this.author_id = it.Author?.Id ?? 0;
+            this.subject = it.Subject;
+            this.description = it.Description;
+            this.start_date = it.StartDate;
+            this.done_ratio = it.DoneRatio;
+            this.created_on = it.CreatedOn;
+            this.updated_on = it.UpdatedOn;
+            this.assigned_to_id = it.AssignedTo?.Id ?? 0;
+            this.category_id = it.Category?.Id ?? 0;
+            this.due_date = it.DueDate;
+        }
+        public int id { get; }
+        public int project_id { get; }
+        public int tracker_id { get; }
+        public int status_id { get; }
+        public int priority_id { get; }
+        public int author_id { get; }
+        public string subject { get; }
+        public string description { get; }
+        public DateTime? start_date { get; }
+        public int done_ratio { get; }
+        public DateTime created_on { get; }
+        public DateTime updated_on { get; }
+        public int assigned_to_id { get; }
+        public int category_id { get; }
+        public DateTime? due_date { get; }
+    }
+
 
     public class Tracker
     {
-        [XmlElement("id")]
+        [JsonProperty("id")]
         public int Id { get; set; }
-        [XmlElement("name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
-
-        public Tracker() { }
-        public Tracker(XElement it)
-        {
-            this.Id = it.Element("id").ToInt();
-            this.Name = it.Element("name").Value;
-        }
     }
+
     public class Status
     {
-        [XmlElement("id")]
+        [JsonProperty("id")]
         public int Id { get; set; }
-        [XmlElement("name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
-        public Status() { }
-        public Status(XElement it)
-        {
-            this.Id = it.Element("id").ToInt();
-            this.Name = it.Element("name").Value;
-        }
     }
+
     public class Priority
     {
-        [XmlElement("id")]
+        [JsonProperty("id")]
         public int Id { get; set; }
-        [XmlElement("name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
-        public Priority() { }
-        public Priority(XElement it)
-        {
-            this.Id = it.Element("id").ToInt();
-            this.Name = it.Element("name").Value;
-        }
     }
+
+    public class User
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+    }
+
+
+
+    public class Memberships : IItems<Membership>
+    {
+        public Membership[] memberships { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Membership> Items => this.memberships.ToList();
+    }
+
+    public class Membership
+    {
+        public int id { get; set; }
+        public Project project { get; set; }
+        public User user { get; set; }
+        public Role[] roles { get; set; }
+    }
+
+
+    public class Role
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+    }
+
+
+
+    public class AssignedTo
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+    }
+
+    public class Category
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+    }
+
+
+
+#if false
     public class User
     {
         [XmlElement("id")]
@@ -161,6 +271,7 @@ namespace Moonmile.Redmine.Model
             }
         }
     }
+#endif
     /// <summary>
     /// XElementアクセス用の拡張メソッド
     /// </summary>
@@ -242,7 +353,7 @@ namespace Moonmile.Redmine.Model
                         }
                         catch { }
                     }
-                    else if ( attr != null )
+                    else if (attr != null)
                     {
                         try
                         {

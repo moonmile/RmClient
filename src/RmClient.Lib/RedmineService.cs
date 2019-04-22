@@ -7,6 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+
 namespace Moonmile.Redmine
 {
     /// <summary>
@@ -112,7 +116,7 @@ namespace Moonmile.Redmine
         /// 各サービスクラスのテンプレート
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public class Service<T> where T : new() 
+        public class Service<CollT, T> where CollT : IItems<T> 
         {
             protected RedmineService _rs;
 
@@ -128,27 +132,15 @@ namespace Moonmile.Redmine
             }
 
             /// <summary>
-            /// new T(el) の代わりに、CreateItem を用意してオーバーライドさせる
-            /// </summary>
-            /// <param name="el"></param>
-            /// <returns></returns>
-            internal Func<XElement, T> CreateItem = (el) => { return new T(); };
-
-            /// <summary>
             /// 全体リストを取得
             /// </summary>
             /// <returns></returns>
             public virtual async Task<List<T>> GetListAsync()
             {
-                var url = $"{_baseurl}{_tablename}.xml?key={_apikey}";
-                var xml = await _cl.GetStringAsync(url);
-                var doc = XDocument.Load(new System.IO.StringReader(xml));
-                var items = new List<T>();
-                foreach (var it in doc.Root.Elements())
-                {
-                    items.Add(CreateItem(it));
-                }
-                return items;
+                var url = $"{_baseurl}{_tablename}.json?key={_apikey}";
+                var json = await _cl.GetStringAsync(url);
+                var root = JsonConvert.DeserializeObject<CollT>(json);
+                return root.Items;
             }
 
             /// <summary>
@@ -159,15 +151,10 @@ namespace Moonmile.Redmine
             /// <returns></returns>
             public async Task<List<T>> GetListAsync(string pname, int pid)
             {
-                var url = $"{_baseurl}{_tablename}.xml?{pname}={pid}&key={_apikey}";
-                var xml = await _cl.GetStringAsync(url);
-                var doc = XDocument.Load(new System.IO.StringReader(xml));
-                var items = new List<T>();
-                foreach (var it in doc.Root.Elements())
-                {
-                    items.Add(CreateItem(it));
-                }
-                return items;
+                var url = $"{_baseurl}{_tablename}.json?{pname}={pid}&key={_apikey}";
+                var json = await _cl.GetStringAsync(url);
+                var root = JsonConvert.DeserializeObject<CollT>(json);
+                return root.Items;
             }
             /// <summary>
             /// IDを指定して単独のアイテムを取得
@@ -176,10 +163,9 @@ namespace Moonmile.Redmine
             /// <returns></returns>
             public virtual async Task<T> GetAsync( int id)
             {
-                var url = $"{_baseurl}{_tablename}/{id}.xml?key={_apikey}";
-                var xml = await _cl.GetStringAsync(url);
-                var doc = XDocument.Load(new System.IO.StringReader(xml));
-                var item = CreateItem(doc.Root);
+                var url = $"{_baseurl}{_tablename}/{id}.json?key={_apikey}";
+                var json = await _cl.GetStringAsync(url);
+                var item = JsonConvert.DeserializeObject<T>(json);
                 return item;
             }
             /*
@@ -201,21 +187,19 @@ namespace Moonmile.Redmine
         /// <summary>
         /// プロジェクト情報へアクセス
         /// </summary>
-        public class ProjectService : Service<Project>
+        public class ProjectService : Service<Projects, Project>
         {
             public ProjectService(RedmineService rs) : base( rs, "projects" )
             {
-                this.CreateItem = el => new Model.Project(el);
             }
         }
         /// <summary>
         /// チケット情報へのアクセス
         /// </summary>
-        public class IssueService : Service<Issue>
+        public class IssueService : Service<Issues, Issue>
         {
             public IssueService(RedmineService rs) : base( rs, "issues" )
             {
-                this.CreateItem = el => new Model.Issue(el);
             }
             /// <summary>
             /// プロジェクトIDを指定して、チケット一覧を取得
@@ -232,10 +216,18 @@ namespace Moonmile.Redmine
             /// <param name="item"></param>
             public async Task<bool> UpdateAsync(Issue item)
             {
+#if false
                 var url = $"{_baseurl}{_tablename}/{item.Id}.xml?key={_apikey}";
                 var xml = item.ToXml();
                 var contnet = new StringContent(xml, Encoding.UTF8, "application/xml");
                 var res = await _cl.PutAsync(url, contnet);
+#endif
+                var url = $"{_baseurl}{_tablename}/{item.Id}.json?key={_apikey}";
+                var json = JsonConvert.SerializeObject(new IssueUpdate(item));
+                json = $"{{ \"issue\": {json} }}"; 
+                var contnet = new StringContent(json, Encoding.UTF8, "text/json");
+                var res = await _cl.PutAsync(url, contnet);
+
                 return true;
             }
             /// <summary>
@@ -244,9 +236,15 @@ namespace Moonmile.Redmine
             /// <param name="item"></param>
             public async Task<bool> CreateAsync(Issue item)
             {
+#if false
                 var url = $"{_baseurl}{_tablename}.xml?key={_apikey}";
                 var xml = item.ToXml();
                 var contnet = new StringContent(xml, Encoding.UTF8, "application/xml");
+                var res = await _cl.PostAsync(url, contnet);
+#endif
+                var url = $"{_baseurl}{_tablename}.json?key={_apikey}";
+                var json = JsonConvert.SerializeObject(item);
+                var contnet = new StringContent(json, Encoding.UTF8, "application/json");
                 var res = await _cl.PostAsync(url, contnet);
                 return true;
             }
@@ -254,44 +252,40 @@ namespace Moonmile.Redmine
         /// <summary>
         /// トラッカー一覧へのアクセス
         /// </summary>
-        public class TrackerService : Service<Tracker>
+        public class TrackerService : Service<Trackers, Tracker>
         {
             public TrackerService(RedmineService rs) : base(rs, "trackers")
             {
-                this.CreateItem = el => new Model.Tracker(el);
             }
         }
         /// <summary>
         /// ステータス一覧へのアクセス
         /// </summary>
-        public class StatusService : Service<Status>
+        public class StatusService : Service<Statuses, Status>
         {
             public StatusService(RedmineService rs) 
                 : base( rs, "issue_statuses")
             { 
-                this.CreateItem = el => new Model.Status(el);
             }
         }
         /// <summary>
         /// 優先度一覧へのアクセス
         /// </summary>
-        public class PriorityService : Service<Priority>
+        public class PriorityService : Service<Priorities,Priority>
         {
             public PriorityService(RedmineService rs)
                 : base(rs, "enumerations/issue_priorities")
             {
-                this.CreateItem = el => new Model.Priority(el);
             }
         }
         /// <summary>
         /// ユーザー一覧へのアクセス
         /// </summary>
-        public class UserService : Service<User>
+        public class UserService : Service<Users, User>
         {
             public UserService(RedmineService rs)
                 : base(rs, "users")
             {
-                this.CreateItem = el => new Model.User(el);
             }
             /// <summary>
             /// プロジェクトIDを指定してリストを取得
@@ -301,13 +295,13 @@ namespace Moonmile.Redmine
             /// <returns></returns>
             public async Task<List<User>> GetListAsync(int pid)
             {
-                var url = $"{_baseurl}projects/{pid}/memberships.xml?key={_apikey}";
-                var xml = await _cl.GetStringAsync(url);
-                var doc = XDocument.Load(new System.IO.StringReader(xml));
+                var url = $"{_baseurl}projects/{pid}/memberships.json?key={_apikey}";
+                var json = await _cl.GetStringAsync(url);
+                var root = JsonConvert.DeserializeObject<Memberships>(json);
                 var items = new List<User>();
-                foreach (var it in doc.Root.Elements())
+                foreach( var it in root.memberships )
                 {
-                    items.Add(new User(it));
+                    items.Add(it.user);
                 }
                 return items;
             }
