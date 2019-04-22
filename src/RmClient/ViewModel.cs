@@ -115,6 +115,27 @@ namespace RmClient
             return item;
         }
 
+        /// <summary>
+        /// クリップボードにコピーする
+        /// </summary>
+        public void CopyTicket()
+        {
+            var text = "";
+            text += $"{this.Ticket.Id}\t";
+            text += $"{this.Ticket.Subject}\t";
+            text += "\"" +  this.Ticket.Description + "\"" + "\t";
+            text += this.Ticket.StartDate.ToString("yyyy/MM/dd");
+            // text = text.Replace("\n", "");
+
+            try
+            {
+                System.Windows.Clipboard.SetText(text);
+                // 例外が発生するがコピーはできている
+
+            }
+            catch { }
+        }
+
         // コンボボックス用のリストを取得
         private List<Tracker> _Trackers;
         public List<Tracker> Trackers { get { return _Trackers; } set { SetProperty(ref _Trackers, value, nameof(Trackers)); } }

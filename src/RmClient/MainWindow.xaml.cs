@@ -91,6 +91,17 @@ namespace RmClient
         {
             _vm.CreateTicket();
         }
+
+        /// <summary>
+        /// CSV形式でクリップボードにコピーする
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void clickIssueCopy(object sender, RoutedEventArgs e)
+        {
+            _vm.CopyTicket();
+        }
     }
 
  }
