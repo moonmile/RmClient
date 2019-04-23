@@ -116,7 +116,7 @@ namespace Moonmile.Redmine
         /// 各サービスクラスのテンプレート
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public class Service<CollT, T> where CollT : IItems<T> 
+        public class Service<RootT, T> where RootT : IRootItems<T> 
         {
             protected RedmineService _rs;
 
@@ -139,7 +139,7 @@ namespace Moonmile.Redmine
             {
                 var url = $"{_baseurl}{_tablename}.json?key={_apikey}";
                 var json = await _cl.GetStringAsync(url);
-                var root = JsonConvert.DeserializeObject<CollT>(json);
+                var root = JsonConvert.DeserializeObject<RootT>(json);
                 return root.Items;
             }
 
@@ -153,7 +153,7 @@ namespace Moonmile.Redmine
             {
                 var url = $"{_baseurl}{_tablename}.json?{pname}={pid}&key={_apikey}";
                 var json = await _cl.GetStringAsync(url);
-                var root = JsonConvert.DeserializeObject<CollT>(json);
+                var root = JsonConvert.DeserializeObject<RootT>(json);
                 return root.Items;
             }
             /// <summary>
@@ -187,7 +187,7 @@ namespace Moonmile.Redmine
         /// <summary>
         /// プロジェクト情報へアクセス
         /// </summary>
-        public class ProjectService : Service<Projects, Project>
+        public class ProjectService : Service<RootProject, Project>
         {
             public ProjectService(RedmineService rs) : base( rs, "projects" )
             {
@@ -196,7 +196,7 @@ namespace Moonmile.Redmine
         /// <summary>
         /// チケット情報へのアクセス
         /// </summary>
-        public class IssueService : Service<Issues, Issue>
+        public class IssueService : Service<RootIssue, Issue>
         {
             public IssueService(RedmineService rs) : base( rs, "issues" )
             {
@@ -239,7 +239,7 @@ namespace Moonmile.Redmine
         /// <summary>
         /// トラッカー一覧へのアクセス
         /// </summary>
-        public class TrackerService : Service<Trackers, Tracker>
+        public class TrackerService : Service<RootTracker, Tracker>
         {
             public TrackerService(RedmineService rs) : base(rs, "trackers")
             {
@@ -248,7 +248,7 @@ namespace Moonmile.Redmine
         /// <summary>
         /// ステータス一覧へのアクセス
         /// </summary>
-        public class StatusService : Service<Statuses, Status>
+        public class StatusService : Service<RotStatus, Status>
         {
             public StatusService(RedmineService rs) 
                 : base( rs, "issue_statuses")
@@ -258,7 +258,7 @@ namespace Moonmile.Redmine
         /// <summary>
         /// 優先度一覧へのアクセス
         /// </summary>
-        public class PriorityService : Service<Priorities,Priority>
+        public class PriorityService : Service<RootPriorty,Priority>
         {
             public PriorityService(RedmineService rs)
                 : base(rs, "enumerations/issue_priorities")
@@ -268,7 +268,7 @@ namespace Moonmile.Redmine
         /// <summary>
         /// ユーザー一覧へのアクセス
         /// </summary>
-        public class UserService : Service<Users, User>
+        public class UserService : Service<RootUser, User>
         {
             public UserService(RedmineService rs)
                 : base(rs, "users")
@@ -284,7 +284,7 @@ namespace Moonmile.Redmine
             {
                 var url = $"{_baseurl}projects/{pid}/memberships.json?key={_apikey}";
                 var json = await _cl.GetStringAsync(url);
-                var root = JsonConvert.DeserializeObject<Memberships>(json);
+                var root = JsonConvert.DeserializeObject<RootMembership>(json);
                 var items = new List<User>();
                 foreach( var it in root.memberships )
                 {

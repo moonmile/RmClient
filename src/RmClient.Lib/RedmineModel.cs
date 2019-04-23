@@ -11,20 +11,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Moonmile.Redmine.Model
 {
-    public interface IItems<T>
-    {
-        List<T> Items { get; }
-    }
-
-    public class Projects : IItems<Project>
-    {
-        public Project[] projects { get; set; }
-        public int total_count { get; set; }
-        public int offset { get; set; }
-        public int limit { get; set; }
-        public List<Project> Items { get => this.projects.ToList(); }
-    }
-
     public class Project
     {
         [JsonProperty("id")]
@@ -43,54 +29,6 @@ namespace Moonmile.Redmine.Model
         public DateTime UpdatedOn { get; set; }
         [JsonProperty("is_public")]
         public bool IsPublic { get; set; }
-    }
-
-    public class Issues : IItems<Issue>
-    {
-        public Issue[] issues { get; set; }
-        public int total_count { get; set; }
-        public int offset { get; set; }
-        public int limit { get; set; }
-        public List<Issue> Items { get => this.issues.ToList(); }
-    }
-
-    public class Users : IItems<User>
-    {
-        [JsonProperty("memberships")]
-        public User[] users { get; set; }
-        public int total_count { get; set; }
-        public int offset { get; set; }
-        public int limit { get; set; }
-        public List<User> Items { get => this.users.ToList(); }
-    }
-
-    public class Trackers : IItems<Tracker>
-    {
-        public Tracker[] trackers { get; set; }
-        public int total_count { get; set; }
-        public int offset { get; set; }
-        public int limit { get; set; }
-        public List<Tracker> Items { get => this.trackers.ToList(); }
-    }
-
-    public class Statuses : IItems<Status>
-    {
-        [JsonProperty("issue_statuses")]
-        public Status[] statuses { get; set; }
-        public int total_count { get; set; }
-        public int offset { get; set; }
-        public int limit { get; set; }
-        public List<Status> Items { get => this.statuses.ToList(); }
-    }
-
-    public class Priorities : IItems<Priority>
-    {
-        [JsonProperty("issue_priorities")]
-        public Priority[] priorities { get; set; }
-        public int total_count { get; set; }
-        public int offset { get; set; }
-        public int limit { get; set; }
-        public List<Priority> Items { get => this.priorities.ToList(); }
     }
 
     public class Issue
@@ -206,14 +144,6 @@ namespace Moonmile.Redmine.Model
 
 
 
-    public class Memberships : IItems<Membership>
-    {
-        public Membership[] memberships { get; set; }
-        public int total_count { get; set; }
-        public int offset { get; set; }
-        public int limit { get; set; }
-        public List<Membership> Items => this.memberships.ToList();
-    }
 
     public class Membership
     {
@@ -249,4 +179,74 @@ namespace Moonmile.Redmine.Model
         [JsonProperty("name")]
         public string Name { get; set; }
     }
+
+    #region JSON形式受信のルートクラス
+    public interface IRootItems<T>
+    {
+        List<T> Items { get; }
+    }
+
+    public class RootProject : IRootItems<Project>
+    {
+        public Project[] projects { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Project> Items { get => this.projects.ToList(); }
+    }
+    public class RootIssue : IRootItems<Issue>
+    {
+        public Issue[] issues { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Issue> Items { get => this.issues.ToList(); }
+    }
+    public class RootUser : IRootItems<User>
+    {
+        [JsonProperty("memberships")]
+        public User[] users { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<User> Items { get => this.users.ToList(); }
+    }
+    public class RootTracker : IRootItems<Tracker>
+    {
+        public Tracker[] trackers { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Tracker> Items { get => this.trackers.ToList(); }
+    }
+
+    public class RotStatus : IRootItems<Status>
+    {
+        [JsonProperty("issue_statuses")]
+        public Status[] statuses { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Status> Items { get => this.statuses.ToList(); }
+    }
+
+    public class RootPriorty : IRootItems<Priority>
+    {
+        [JsonProperty("issue_priorities")]
+        public Priority[] priorities { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Priority> Items { get => this.priorities.ToList(); }
+    }
+    public class RootMembership : IRootItems<Membership>
+    {
+        public Membership[] memberships { get; set; }
+        public int total_count { get; set; }
+        public int offset { get; set; }
+        public int limit { get; set; }
+        public List<Membership> Items => this.memberships.ToList();
+    }
+    #endregion
+
 }
