@@ -136,6 +136,11 @@ namespace RmClient
             catch { }
         }
 
+        public async Task<bool> FileUpload( string path )
+        {
+            return await _sv.Issue.UploadFile(this.Ticket.Id, path);
+        }
+
         // コンボボックス用のリストを取得
         private List<Tracker> _Trackers;
         public List<Tracker> Trackers { get { return _Trackers; } set { SetProperty(ref _Trackers, value, nameof(Trackers)); } }

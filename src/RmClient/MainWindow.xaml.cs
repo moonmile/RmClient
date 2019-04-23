@@ -1,4 +1,5 @@
-﻿using Moonmile.Redmine;
+﻿using Microsoft.Win32;
+using Moonmile.Redmine;
 using Moonmile.Redmine.Model;
 using System;
 using System.Collections.Generic;
@@ -102,7 +103,38 @@ namespace RmClient
         {
             _vm.CopyTicket();
         }
-    }
 
+        /// <summary>
+        /// ファイルアップロード
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void clickFileUpload(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            // ファイルの種類を設定
+            dialog.Filter = 
+                "テキストファイル (*.txt)|*.txt|" + 
+                "画像ファイル (*.jpg, *.jpeg, *.bmp, *.png)|*.jpg;*.jpeg;*.bmp,*.png|" +
+                "PDFファイル (*.pdf)|*.pdf|" +
+                "Excelファイル (*.xls,*.xlsx)|*.xls;*.xlsx|" +
+                "Wordファイル (*.doc,*.docx)|*.doc;*.docx|" +
+                "圧縮ファイル (*.zip)|*.zip|" +
+                "全てのファイル (*.*)|*.*";
+            // ダイアログを表示する
+            if (dialog.ShowDialog() == true)
+            {
+                var path = dialog.FileName;
+                if ( await _vm.FileUpload(path) == true )
+                {
+                    MessageBox.Show("ファイルを添付しました", "RmClient", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("ファイルの添付に失敗しました", "RmClient", MessageBoxButton.OK, MessageBoxImage.Error );
+                }
+            }
+        }
+    }
  }
 

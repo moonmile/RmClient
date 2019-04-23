@@ -10,7 +10,6 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-
 namespace Moonmile.Redmine
 {
     /// <summary>
@@ -115,7 +114,6 @@ namespace Moonmile.Redmine
         }
         #endregion
 
-
         /// <summary>
         /// 各サービスクラスのテンプレート
         /// </summary>
@@ -203,7 +201,7 @@ namespace Moonmile.Redmine
         /// </summary>
         public class IssueService : Service<RootIssue, Issue>
         {
-            public IssueService(RedmineService rs) : base( rs, "issues" )
+            public IssueService(RedmineService rs) : base(rs, "issues")
             {
             }
             /// <summary>
@@ -211,7 +209,7 @@ namespace Moonmile.Redmine
             /// </summary>
             /// <param name="pid"></param>
             /// <returns></returns>
-            public Task<List<Issue>> GetListAsync( int pid )
+            public Task<List<Issue>> GetListAsync(int pid)
             {
                 return base.GetListAsync("project_id", pid);
             }
@@ -222,7 +220,7 @@ namespace Moonmile.Redmine
             public async Task<bool> UpdateAsync(Issue item)
             {
                 var url = $"{_baseurl}{_tablename}/{item.Id}.json";
-                var json = IssueUpdate.ToJson(item);
+                var json = new IssueUpdate(item).ToJson();
                 var contnet = new StringContent(json, Encoding.UTF8, "application/json");
                 var res = await _cl.PutAsync(url, contnet);
 
@@ -235,9 +233,50 @@ namespace Moonmile.Redmine
             public async Task<bool> CreateAsync(Issue item)
             {
                 var url = $"{_baseurl}{_tablename}.json";
-                var json = IssueUpdate.ToJson(item);
+                var json = new IssueUpdate(item).ToJson();
                 var contnet = new StringContent(json, Encoding.UTF8, "application/json");
                 var res = await _cl.PostAsync(url, contnet);
+                return true;
+            }
+
+            /// <summary>
+            /// 添付ファイルを追加
+            /// </summary>
+            /// <param name="path"></param>
+            /// <returns></returns>
+            public async Task<bool> UploadFile(int id, string path)
+            {
+                var filename = System.IO.Path.GetFileName(path);
+                var url = $"{_baseurl}uploads.json?filename={filename}";
+                var contnet = new System.Net.Http.StreamContent(System.IO.File.OpenRead(path));
+                contnet.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+                var res = await _cl.PostAsync(url, contnet);
+                var json = await res.Content.ReadAsStringAsync();
+                JObject o = JsonConvert.DeserializeObject(json) as JObject;
+                // トークンを取得
+                string token = o.Value<JObject>("upload").Value<string>("token");
+
+                string contentType = "text/plain";
+                switch (System.IO.Path.GetExtension(path).ToLower())
+                {
+                    case ".txt": contentType = "text/plain"; break;
+                    case ".bmp": contentType = "image/bmp"; break;
+                    case ".jpg": contentType = "image/jpeg"; break;
+                    case ".png": contentType = "image/png"; break;
+                    case ".pdf": contentType = "application/pdf"; break;
+                    case ".doc": contentType = "application/word"; break;
+                    case ".docx": contentType = "application/word"; break;
+                    case ".xls": contentType = "application/excel"; break;
+                    case ".xlsx": contentType = "application/excel"; break;
+                    case ".zip": contentType = "application/zip"; break;
+                    default: contentType = "text/plain"; break;
+                }
+                url = $"{_baseurl}{_tablename}/{id}.json";
+                json = new IssueUpload(token, filename, contentType).ToJson();
+                var contnet2 = new StringContent(json, Encoding.UTF8, "application/json");
+                res = await _cl.PutAsync(url, contnet2);
+
+                System.Diagnostics.Debug.WriteLine(json);
                 return true;
             }
         }
@@ -253,7 +292,7 @@ namespace Moonmile.Redmine
         /// <summary>
         /// ステータス一覧へのアクセス
         /// </summary>
-        public class StatusService : Service<RotStatus, Status>
+        public class StatusService : Service<RootStatus, Status>
         {
             public StatusService(RedmineService rs) 
                 : base( rs, "issue_statuses")

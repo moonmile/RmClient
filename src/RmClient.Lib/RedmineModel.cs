@@ -63,11 +63,13 @@ namespace Moonmile.Redmine.Model
         public Category Category { get; set; }
         [JsonProperty("due_date")]
         public DateTime? DueDate { get; set; }
+        [JsonProperty("attachments")]
+        public Attachment[] Attachments { get; set; }
     }
 
     class IssueUpdate
     {
-        IssueUpdate( Issue it )
+        public IssueUpdate(Issue it)
         {
             this.subject = it.Subject;
             this.description = it.Description;
@@ -76,7 +78,7 @@ namespace Moonmile.Redmine.Model
             this.tracker_id = it.Tracker?.Id ?? 0;
             this.status_id = it.Status?.Id ?? 0;
             this.assigned_to_id = it.AssignedTo?.Id ?? 0;
-            this.start_date = it.StartDate == null? "": it.StartDate.Value.ToString("yyyy-MM-dd");
+            this.start_date = it.StartDate == null ? "" : it.StartDate.Value.ToString("yyyy-MM-dd");
             this.done_ratio = it.DoneRatio;
             this.due_date = it.DueDate == null ? "" : it.DueDate.Value.ToString("yyyy-MM-dd");
             /*
@@ -101,10 +103,29 @@ namespace Moonmile.Redmine.Model
         public int category_id { get; }
         */
 
-        public static string ToJson(Issue item )
+        public string ToJson()
         {
-            var json = JsonConvert.SerializeObject(new IssueUpdate(item));
+            var json = JsonConvert.SerializeObject(this);
             json = $"{{ \"issue\": {json} }}";
+            return json;
+        }
+    }
+    class IssueUpload
+    {
+        public string token { get; }
+        public string filename { get; }
+        public string content_type { get; }
+
+        public IssueUpload( string token, string filename, string content_type )
+        {
+            this.token = token;
+            this.filename = filename;
+            this.content_type = content_type;
+        }
+        public string ToJson()
+        {
+            var json = JsonConvert.SerializeObject(this);
+            json = @"{ ""issue"": { ""uploads"" : [ " + json + " ] }}";
             return json;
         }
     }
@@ -180,6 +201,32 @@ namespace Moonmile.Redmine.Model
         public string Name { get; set; }
     }
 
+
+
+    public class Attachment
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+        [JsonProperty("filename")]
+        public string Filename { get; set; }
+        [JsonProperty("filesize")]
+        public int Filesize { get; set; }
+        [JsonProperty("content_type")]
+        public string ContentType { get; set; }
+        [JsonProperty("description")]
+        public string Description { get; set; }
+        [JsonProperty("content_url")]
+        public string ContentUrl { get; set; }
+        [JsonProperty("thumbnail_url")]
+        public string ThumbnailUrl { get; set; }
+        [JsonProperty("author")]
+        public User Author { get; set; }
+        [JsonProperty("created_on")]
+        public DateTime CreatedOn { get; set; }
+    }
+
+
+
     #region JSON形式受信のルートクラス
     public interface IRootItems<T>
     {
@@ -220,7 +267,7 @@ namespace Moonmile.Redmine.Model
         public List<Tracker> Items { get => this.trackers.ToList(); }
     }
 
-    public class RotStatus : IRootItems<Status>
+    public class RootStatus : IRootItems<Status>
     {
         [JsonProperty("issue_statuses")]
         public Status[] statuses { get; set; }
