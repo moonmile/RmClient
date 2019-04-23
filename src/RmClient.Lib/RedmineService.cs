@@ -40,6 +40,7 @@ namespace Moonmile.Redmine
             this.Status = new StatusService(this);
             this.User = new UserService(this);
             this.Priority = new PriorityService(this);
+
         }
 
         /// <summary>
@@ -54,6 +55,9 @@ namespace Moonmile.Redmine
                 var doc = XDocument.Load(new System.IO.StringReader(xml));
                 this.ApiKey = doc.Root.Element("ApiKey").Value;
                 this.BaseUrl = doc.Root.Element("BaseUrl").Value;
+                // APIキーをヘッダに追加
+                _cl.DefaultRequestHeaders.Add("X-Redmine-API-Key", this.ApiKey);
+
                 return true;
             }
             catch
@@ -137,7 +141,8 @@ namespace Moonmile.Redmine
             /// <returns></returns>
             public virtual async Task<List<T>> GetListAsync()
             {
-                var url = $"{_baseurl}{_tablename}.json?key={_apikey}";
+                // var url = $"{_baseurl}{_tablename}.json?key={_apikey}";
+                var url = $"{_baseurl}{_tablename}.json";
                 var json = await _cl.GetStringAsync(url);
                 var root = JsonConvert.DeserializeObject<RootT>(json);
                 return root.Items;
@@ -151,7 +156,7 @@ namespace Moonmile.Redmine
             /// <returns></returns>
             public async Task<List<T>> GetListAsync(string pname, int pid)
             {
-                var url = $"{_baseurl}{_tablename}.json?{pname}={pid}&key={_apikey}";
+                var url = $"{_baseurl}{_tablename}.json?{pname}={pid}";
                 var json = await _cl.GetStringAsync(url);
                 var root = JsonConvert.DeserializeObject<RootT>(json);
                 return root.Items;
@@ -163,7 +168,7 @@ namespace Moonmile.Redmine
             /// <returns></returns>
             public virtual async Task<T> GetAsync( int id)
             {
-                var url = $"{_baseurl}{_tablename}/{id}.json?key={_apikey}";
+                var url = $"{_baseurl}{_tablename}/{id}.json";
                 var json = await _cl.GetStringAsync(url);
                 var item = JsonConvert.DeserializeObject<T>(json);
                 return item;
@@ -216,7 +221,7 @@ namespace Moonmile.Redmine
             /// <param name="item"></param>
             public async Task<bool> UpdateAsync(Issue item)
             {
-                var url = $"{_baseurl}{_tablename}/{item.Id}.json?key={_apikey}";
+                var url = $"{_baseurl}{_tablename}/{item.Id}.json";
                 var json = IssueUpdate.ToJson(item);
                 var contnet = new StringContent(json, Encoding.UTF8, "application/json");
                 var res = await _cl.PutAsync(url, contnet);
@@ -229,7 +234,7 @@ namespace Moonmile.Redmine
             /// <param name="item"></param>
             public async Task<bool> CreateAsync(Issue item)
             {
-                var url = $"{_baseurl}{_tablename}.json?key={_apikey}";
+                var url = $"{_baseurl}{_tablename}.json";
                 var json = IssueUpdate.ToJson(item);
                 var contnet = new StringContent(json, Encoding.UTF8, "application/json");
                 var res = await _cl.PostAsync(url, contnet);
@@ -282,7 +287,7 @@ namespace Moonmile.Redmine
             /// <returns></returns>
             public async Task<List<User>> GetListAsync(int pid)
             {
-                var url = $"{_baseurl}projects/{pid}/memberships.json?key={_apikey}";
+                var url = $"{_baseurl}projects/{pid}/memberships.json";
                 var json = await _cl.GetStringAsync(url);
                 var root = JsonConvert.DeserializeObject<RootMembership>(json);
                 var items = new List<User>();
