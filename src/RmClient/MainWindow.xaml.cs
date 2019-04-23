@@ -135,6 +135,17 @@ namespace RmClient
                 }
             }
         }
+
+        /// <summary>
+        /// ブラウザで表示する
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void clickShowIssue(object sender, RoutedEventArgs e)
+        {
+            var url = _vm.TicketUrl;
+            System.Diagnostics.Process.Start(url);
+        }
     }
  }
 

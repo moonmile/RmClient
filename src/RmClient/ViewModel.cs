@@ -41,6 +41,10 @@ namespace RmClient
 
         RedmineService _sv;
 
+        public string TicketUrl => $"{_sv.BaseUrl}issues/{this.Ticket.Id}";
+        public string ProjectUrl => $"{_sv.BaseUrl}projects/{this.Project.Identifier}";
+
+
         public ViewModel()
         {
             _sv = new RedmineService();

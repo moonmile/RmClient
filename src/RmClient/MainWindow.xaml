@@ -120,5 +120,8 @@
             Click="clickFileUpload"
             Content="添付"
             HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="172,10,0,0" Height="40" Grid.Row="2"/>
+        <Button 
+            Click="clickShowIssue"
+            Content="ブラウザで表示" VerticalAlignment="Top" Margin="0,10,91,0" Height="40" Grid.Row="2" HorizontalAlignment="Right" Width="76"/>
     </Grid>
 </Window>
