@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RmClient", "RmClient\RmClient.csproj", "{0A0FBF6F-858C-4789-ADBE-F9E02CA466F6}"
 EndProject
@@ -13,9 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RmClient.Console", "RmClien
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{63D4F8AD-2951-4121-8493-4579605769D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RmClient.Lib.Test", "test\RmClient.Lib.Test\RmClient.Lib.Test.csproj", "{F8185049-1BC6-4754-8FE1-050383AEA470}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RmClient.Lib.Test", "test\RmClient.Lib.Test\RmClient.Lib.Test.csproj", "{F8185049-1BC6-4754-8FE1-050383AEA470}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RmClient.Lib.Test.Console", "test\RmClient.Lib.Test.Console\RmClient.Lib.Test.Console.csproj", "{84D84751-72B7-4DA0-ACDA-F48A83614DDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RmClient.Lib.Test.Console", "test\RmClient.Lib.Test.Console\RmClient.Lib.Test.Console.csproj", "{84D84751-72B7-4DA0-ACDA-F48A83614DDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RmBulkup", "RmBulkup\RmBulkup.csproj", "{0E9277AA-BE7E-4E6C-8918-78A338559E50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{84D84751-72B7-4DA0-ACDA-F48A83614DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84D84751-72B7-4DA0-ACDA-F48A83614DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84D84751-72B7-4DA0-ACDA-F48A83614DDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E9277AA-BE7E-4E6C-8918-78A338559E50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E9277AA-BE7E-4E6C-8918-78A338559E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E9277AA-BE7E-4E6C-8918-78A338559E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E9277AA-BE7E-4E6C-8918-78A338559E50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

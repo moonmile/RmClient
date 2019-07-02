@@ -30,6 +30,10 @@ namespace Moonmile.Redmine
 
         public string ApiKey { get { return apikey; } set { apikey = value; } }
         public string BaseUrl { get { return baseurl; } set { baseurl = value; } }
+        public string AuthBasicUsername { get; set; }
+        public string authBasicPassword { get; set; }
+
+
 
         public RedmineService()
         {
@@ -39,6 +43,7 @@ namespace Moonmile.Redmine
             this.Status = new StatusService(this);
             this.User = new UserService(this);
             this.Priority = new PriorityService(this);
+
 
         }
 
@@ -57,6 +62,14 @@ namespace Moonmile.Redmine
                 // APIキーをヘッダに追加
                 _cl.DefaultRequestHeaders.Add("X-Redmine-API-Key", this.ApiKey);
 
+                if ( doc.Root.Element("Authorization") != null )
+                {
+                    // BASIC認証を設定
+                    this.AuthBasicUsername = doc.Root.Element("Authorization").Element("username").Value;
+                    this.authBasicPassword = doc.Root.Element("Authorization").Element("password").Value;
+                    var byteArray = Encoding.ASCII.GetBytes(string.Format("{0}:{1}", AuthBasicUsername, authBasicPassword));
+                    _cl.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                }
                 return true;
             }
             catch
