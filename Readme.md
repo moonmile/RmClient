@@ -39,4 +39,3 @@ Uses Redmine's REST API.
 
 - MIT
 
-
