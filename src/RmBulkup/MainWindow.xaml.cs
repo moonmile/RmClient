@@ -35,9 +35,10 @@ namespace RmBulkup
             this.DataContext = _vm;
         }
 
-        private void clickUpload(object sender, RoutedEventArgs e)
+        private async void clickUpload(object sender, RoutedEventArgs e)
         {
-
+            // await _vm.Upload();
+            // System.Windows.MessageBox.Show($"{_vm.Items.Count} 件アップロードしました");
         }
 
         private void clickSelectExcel(object sender, RoutedEventArgs e)
@@ -58,6 +59,24 @@ namespace RmBulkup
         /// <param name="e"></param>
         private void clickGetRedmine(object sender, RoutedEventArgs e)
         {
+
+        }
+
+        /// <summary>
+        /// Issuesをダウンロード
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void clickSave(object sender, RoutedEventArgs e)
+        {
+            /// ファイル名が空欄の場合は、テンプレートを利用する
+            if ( _vm.Filename == "" )
+            {
+                _vm.Filename = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) +
+                    "\\" + $"タスク管理_{_vm.Project.Name}.xlsx";
+            }
+            /// ファイル名を指定した場合は、既存Excelに書き込む
+            
 
         }
     }

@@ -28,7 +28,17 @@ namespace Moonmile.Redmine
         string baseurl = "";
         HttpClient _cl = new HttpClient();
 
-        public string ApiKey { get { return apikey; } set { apikey = value; } }
+        public string ApiKey
+        {
+            get { return apikey; }
+            set
+            {
+                apikey = value;
+                // APIキーをヘッダに追加
+                _cl.DefaultRequestHeaders.Add("X-Redmine-API-Key", apikey);
+            }
+        }
+
         public string BaseUrl { get { return baseurl; } set { baseurl = value; } }
         public string AuthBasicUsername { get; set; }
         public string authBasicPassword { get; set; }
@@ -60,7 +70,7 @@ namespace Moonmile.Redmine
                 this.ApiKey = doc.Root.Element("ApiKey").Value;
                 this.BaseUrl = doc.Root.Element("BaseUrl").Value;
                 // APIキーをヘッダに追加
-                _cl.DefaultRequestHeaders.Add("X-Redmine-API-Key", this.ApiKey);
+                // _cl.DefaultRequestHeaders.Add("X-Redmine-API-Key", this.ApiKey);
 
                 if ( doc.Root.Element("Authorization") != null )
                 {
